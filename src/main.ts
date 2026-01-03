@@ -375,3 +375,41 @@ function onmove(e) {
 document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.classList.add('loaded');
 }, false);
+
+const cards = document.querySelectorAll(".tech-card");
+
+cards.forEach(card => {
+  card.addEventListener("mousemove", (e) => {
+    rotateCard(e, card);
+  });
+
+  card.addEventListener("mouseleave", () => {
+    card.style.setProperty("--rotateX", "0deg");
+    card.style.setProperty("--rotateY", "0deg");
+  });
+});
+
+let cardRAF: number | null = null;
+
+function rotateCard(event: MouseEvent, card: HTMLElement) {
+  if (cardRAF) return;
+
+  cardRAF = requestAnimationFrame(() => {
+    const rect = card.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((x - centerX) / centerX) * 15;
+    const rotateY = -((y - centerY) / centerY) * 15;
+
+    card.style.setProperty("--rotateX", rotateX + "deg");
+    card.style.setProperty("--rotateY", rotateY + "deg");
+
+    cardRAF = null;
+  });
+}
+
